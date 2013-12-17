@@ -70,7 +70,7 @@ builder.selenium2.io.addLangFormatter({
         }
     },
     waitFor : "",
-    store : "${{variable}} = {getter};\n",
+    store : "${variable} = {getter};\n",
     boolean_assert:
       "if ({posNot}{getter}) {\n" +
       " die (\"{negNot}{stepTypeName} failed\");\n" +
@@ -81,7 +81,7 @@ builder.selenium2.io.addLangFormatter({
       "}\n",
     boolean_waitFor: "",
     boolean_store:
-      "${{variable}} = {getter};\n",
+      "${variable} = {getter};\n",
     // boolean_getters: {
     //   "TextPresent": {
     //     getter: "(strpos($wd->find_element(\"//html\", \"xpath\")->get_text(), {text}) ne false)",
@@ -106,7 +106,7 @@ builder.selenium2.io.addLangFormatter({
     // },
     getters: {
       "BodyText": {
-        getter: "$wd->find_element(\"//html\", \"xpath\")->get_text();",
+        getter: '$wd->find_element("//html", "xpath")->get_text();',
         cmp: "{text}",
         vartype: ""
       },
@@ -141,7 +141,7 @@ builder.selenium2.io.addLangFormatter({
         vartype: "String"
       },
       "CookieByName": {
-        getter: "get_cookie($wd->get_all_cookies(), {name})",
+        getter: 'get_cookie($wd->get_all_cookies(), {name})',
         cmp: "{value}",
         vartype: ""
       },
