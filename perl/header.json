@@ -1,0 +1,10 @@
+{
+  "headerVersion": 1,
+  "pluginVersion": "0.0.1",
+  "identifier": "perl",
+  "name": "Perl - WebDriver",
+  "description": "Perl exporter using Selenium::Remote::Driver and Test::More",
+  "load": [
+    "plugin.js"
+  ]
+}
