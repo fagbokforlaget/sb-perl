@@ -8,7 +8,27 @@ builder.selenium2.io.addLangFormatter({
         "get" : "ok( $wd->get({url}) );\n",
         "goBack" : "ok( $wd->go_back() );\n",
         "goForward" : "ok( $wd->go_forward() );\n",
-        "refresh" : "ok( $wd->refresh() );\n"
+        "refresh" : "ok( $wd->refresh() );\n",
+        'clickElement' : "ok( $wd->find_element({locator}, {locatorBy})->click() );\n",
+        "mouseOverElement":
+            "ok( $wd->find_element({locator}, {locatorBy})->hover() );\n",
+        "setElementText":
+            "my $el = $wd->find_element({locator}, {locatorBy});\n" +
+            "ok( $el->click() );\n" +
+            "ok( $el->clear() );\n" +
+            "ok( $el->send_keys({text}) );\n",
+        "sendKeysToElement":
+            "my $el = $wd->find_element({locator}, {locatorBy});\n" +
+            "ok( $el->click() );\n" +
+            "ok( $el->send_keys({text}) );\n",
+        "setElementSelected":
+            "my $el = $wd->find_element({locator}, {locatorBy});\n" +
+            "if(! $el->is_selected()) {\nok( $el->click() );\n}",
+        "setElementNotSelected":
+            "my $el = $wd->find_element({locator}, {locatorBy});\n" +
+            "if($el->is_selected()) {\nok( $el->click() );\n}",
+        "submitElement":
+          "ok( $wd->find_element({locator}, {locatorBy})->submit() );\n",
     },
     locatorByForType : function (stepType, locatorType, locatorIndex) {
         // Valid identifiers in Perl: class, class_name, css, id, link,
@@ -51,29 +71,28 @@ builder.selenium2.io.addLangFormatter({
     },
     waitFor : "",
     store : "${{variable}} = {getter};\n",
-    // boolean_assert:
-    //   "if ({posNot}{getter}) {\n" +
-    //   " $wd->close();\n" +
-    //   " throw new Exception(\"{negNot}{stepTypeName} failed\");\n" +
-    //   "}\n",
-    // boolean_verify:
-    //   "if ({posNot}{getter}) {\n" +
-    //   " echo \"{negNot}{stepTypeName} failed\";\n" +
-    //   "}\n",
-    // boolean_waitFor: "",
-    // boolean_store:
-    //   "${{variable}} = {getter};\n",
+    boolean_assert:
+      "if ({posNot}{getter}) {\n" +
+      " die (\"{negNot}{stepTypeName} failed\");\n" +
+      "}\n",
+    boolean_verify:
+      "if ({posNot}{getter}) {\n" +
+      " print \"{negNot}{stepTypeName} failed\";\n" +
+      "}\n",
+    boolean_waitFor: "",
+    boolean_store:
+      "${{variable}} = {getter};\n",
     // boolean_getters: {
     //   "TextPresent": {
-    //     getter: "(strpos($wd->element(\"tag name\", \"html\")->text(), {text}) !== false)",
+    //     getter: "(strpos($wd->find_element(\"//html\", \"xpath\")->get_text(), {text}) ne false)",
     //     vartype: ""
     //   },
     //   "ElementPresent": {
-    //     getter: "(strlen($wd->element({locatorBy}, {locator})) != 0)",
+    //     getter: "(strlen($wd->find_element({locator}, {locatorBy})) != 0)",
     //     vartype: ""
     //   },
     //   "ElementSelected": {
-    //     getter: "($wd->element({locatorBy}, {locator})->selected())",
+    //     getter: "($wd->find_element({locator}, {locatorBy})->is_selected())",
     //     vartype: ""
     //   },
     //   "CookiePresent": {
@@ -85,58 +104,58 @@ builder.selenium2.io.addLangFormatter({
     //     vartype: ""
     //   }
     // },
-    // getters: {
-    //   "BodyText": {
-    //     getter: "$wd->element(\"tag name\", \"html\")->text()",
-    //     cmp: "{text}",
-    //     vartype: ""
-    //   },
-    //   "PageSource": {
-    //     getter: "$wd->source()",
-    //     cmp: "{source}",
-    //     vartype: ""
-    //   },
-    //   "Text": {
-    //     getter: "$wd->element({locatorBy}, {locator})->text",
-    //     cmp: "{text}",
-    //     vartype: ""
-    //   },
-    //   "CurrentUrl": {
-    //     getter: "$wd->url()",
-    //     cmp: "{url}",
-    //     vartype: ""
-    //   },
-    //   "Title": {
-    //     getter: "$wd->title()",
-    //     cmp: "{title}",
-    //     vartype: ""
-    //   },
-    //   "ElementValue": {
-    //     getter: "$wd->element({locatorBy}, {locator})->attribute(\"value\")",
-    //     cmp: "{value}",
-    //     vartype: ""
-    //   },
-    //   "ElementAttribute": {
-    //     getter: "$wd->element({locatorBy}, {locator})->attribute({attributeName})",
-    //     cmp: "{value}",
-    //     vartype: "String"
-    //   },
-    //   "CookieByName": {
-    //     getter: "get_cookie($wd->getAllCookies(), {name})",
-    //     cmp: "{value}",
-    //     vartype: ""
-    //   },
-    //   "AlertText": {
-    //     getter: "$wd->alert_text()",
-    //     cmp: "{text}",
-    //     vartype: ""
-    //   },
-    //   "Eval": {
-    //     getter: "$wd->execute({script})",
-    //     cmp: "{value}",
-    //     vartype: ""
-    //   }
-    // },
+    getters: {
+      "BodyText": {
+        getter: "$wd->find_element(\"//html\", \"xpath\")->get_text();",
+        cmp: "{text}",
+        vartype: ""
+      },
+      "PageSource": {
+        getter: "$wd->get_page_source();",
+        cmp: "{source}",
+        vartype: ""
+      },
+      "Text": {
+        getter: "$wd->find_element({locator}, {locatorBy})->get_text();",
+        cmp: "{text}",
+        vartype: ""
+      },
+      "CurrentUrl": {
+        getter: "$wd->get_current_url();",
+        cmp: "{url}",
+        vartype: ""
+      },
+      "Title": {
+        getter: "$wd->get_title();",
+        cmp: "{title}",
+        vartype: ""
+      },
+      "ElementValue": {
+        getter: "$wd->find_element({locator}, {locatorBy})->get_value();",
+        cmp: "{value}",
+        vartype: ""
+      },
+      "ElementAttribute": {
+        getter: "$wd->find_element({locator}, {locatorBy})->get_attribute({attributeName});",
+        cmp: "{value}",
+        vartype: "String"
+      },
+      "CookieByName": {
+        getter: "get_cookie($wd->get_all_cookies(), {name})",
+        cmp: "{value}",
+        vartype: ""
+      },
+      "AlertText": {
+        getter: "$wd->get_alert_text()",
+        cmp: "{text}",
+        vartype: ""
+      },
+      "Eval": {
+        getter: "$wd->execute_script({script})",
+        cmp: "{value}",
+        vartype: ""
+      }
+    },
     /**
      * Processes a parameter value into an appropriately escaped expression. Mentions of variables
      * with the ${foo} syntax are transformed into expressions that concatenate the variables and
