@@ -39,7 +39,25 @@ builder.selenium2.io.addLangFormatter({
             "my $el = $wd->find_element({locator}, {locatorBy});\n" +
             "if($el->is_selected()) {\nok( $el->click() );\n}",
         "submitElement":
-          "ok( $wd->find_element({locator}, {locatorBy})->submit() );\n",
+            "ok( $wd->find_element({locator}, {locatorBy})->submit() );\n",
+        "addCookie":
+            function(step, escapeValue, userParams, doSubs) {
+                var name = escapeValue(step.type, step.name),
+                    value = escapeValue(step.type, step.value),
+                    path = "/",
+                    domain = "",
+                    secure = 0;
+
+                var opts = step.options.split(",");
+                for (var i = 0; i < opts.length; i++) {
+                  var kv = opts[i].trim().split("=");
+                  if (kv.length == 1) { continue; }
+                  if (kv[0] == "path") {
+                    path = escapeValue(step.type, kv[1])
+                  }
+                return "ok ($wd->add_cookie('" + name + "', '" + value + "', '" + path + "', '" + domain + "', 0) );\n";
+            },
+        "deleteCookie": "ok( $wd->delete_cookie_named({name}) );\n"
     },
     locatorByForType : function (stepType, locatorType, locatorIndex) {
         // Valid identifiers in Perl: class, class_name, css, id, link,
