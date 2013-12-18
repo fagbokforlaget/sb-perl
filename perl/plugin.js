@@ -2,7 +2,18 @@ builder.selenium2.io.addLangFormatter({
     name : "Perl - WebDriver",
     extension : ".t",
     not : "! ",
-    start : "#!perl\n\nuse strict;\nuse warnings;\nuse Test::More;\nuse Selenium::Remote::Driver;\n\nmy $wd = Selenium::Remote::Driver->new();\n",
+    start : "#!perl\n\nuse strict;\nuse warnings;\nuse Test::More;\nuse Selenium::Remote::Driver;\n\nmy $wd = Selenium::Remote::Driver->new();\n" +
+            "sub get_cookie{\n"+
+            "   my (@cookies, $name) = @_;\n" +
+            "   my %cookie;\n" +
+            "   foreach (@array) {" +
+            "       if ($_->{name} ex $name) {\n" +
+            "           %cookie = $_;\n" +
+            "           last;\n" +
+            "       }\n" +
+            "    }\n" +
+            "    return %cookie;\n" +
+            "}",
     end : "\ndone_testing();\n",
     lineForType : {
         "get" : "ok( $wd->get({url}) );\n",
