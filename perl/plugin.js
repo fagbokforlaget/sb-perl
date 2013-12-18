@@ -57,7 +57,18 @@ builder.selenium2.io.addLangFormatter({
                   }
                 return "ok ($wd->add_cookie('" + name + "', '" + value + "', '" + path + "', '" + domain + "', 0) );\n";
             },
-        "deleteCookie": "ok( $wd->delete_cookie_named({name}) );\n"
+        "deleteCookie": "ok( $wd->delete_cookie_named({name}) );\n",
+        "switchToFrame": "(ok $wd->switch_to_frame({identifier}) );\n",
+        "switchToFrameByIndex": "(ok $wd->switch_to_frame({index}) );\n",
+        "switchToWindow": "(ok $wd->switch_to_window({name}) );\n",
+        "switchToDefaultContent": "(ok $wd->switch_to_frame(NULL) );\n",
+        "answerAlert": "ok( $wd->send_keys_to_alert({text}) );\n" +
+                        "ok( $wd->accept_alert );\n",
+        "acceptAlert": "ok( $wd->accept_alert );\n",
+        "dismissAlert": "ok( $wd->dismiss_alert );\n",
+        "saveScreenshot" = "ok( $wd->screenshot() );\n",
+        "print": "print {text};\n",
+        "store": "${variable} = {text};\n"
     },
     locatorByForType : function (stepType, locatorType, locatorIndex) {
         // Valid identifiers in Perl: class, class_name, css, id, link,
@@ -111,28 +122,28 @@ builder.selenium2.io.addLangFormatter({
     boolean_waitFor: "",
     boolean_store:
       "${variable} = {getter};\n",
-    // boolean_getters: {
-    //   "TextPresent": {
-    //     getter: "(strpos($wd->find_element(\"//html\", \"xpath\")->get_text(), {text}) ne false)",
-    //     vartype: ""
-    //   },
-    //   "ElementPresent": {
-    //     getter: "(strlen($wd->find_element({locator}, {locatorBy})) != 0)",
-    //     vartype: ""
-    //   },
-    //   "ElementSelected": {
-    //     getter: "($wd->find_element({locator}, {locatorBy})->is_selected())",
-    //     vartype: ""
-    //   },
-    //   "CookiePresent": {
-    //     getter: "($wd->getAllCookie({name}))",
-    //     vartype: ""
-    //   },
-    //   "AlertPresent": {
-    //     getter: "alert_present($wd)",
-    //     vartype: ""
-    //   }
-    // },
+    boolean_getters: {
+      // "TextPresent": {
+      //   getter: "(strpos($wd->find_element(\"//html\", \"xpath\")->get_text(), {text}) ne false)",
+      //   vartype: ""
+      // },
+      // "ElementPresent": {
+      //   getter: "(strlen($wd->find_element({locator}, {locatorBy})) != 0)",
+      //   vartype: ""
+      // },
+      // "CookiePresent": {
+      //   getter: "($wd->getAllCookie({name}))",
+      //   vartype: ""
+      // },
+      // "AlertPresent": {
+      //   getter: "alert_present($wd)",
+      //   vartype: ""
+      // },
+      "ElementSelected": {
+        getter: "($wd->find_element({locator}, {locatorBy})->is_selected())",
+        vartype: ""
+      }
+    },
     getters: {
       "BodyText": {
         getter: '$wd->find_element("//html", "xpath")->get_text();',
