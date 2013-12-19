@@ -2,18 +2,7 @@ builder.selenium2.io.addLangFormatter({
     name : "Perl - WebDriver",
     extension : ".t",
     not : "! ",
-    start : "#!perl\n\nuse strict;\nuse warnings;\nuse Test::More;\nuse Selenium::Remote::Driver;\n\nmy $wd = Selenium::Remote::Driver->new();\n" +
-            "sub get_cookie{\n"+
-            "   my (@cookies, $name) = @_;\n" +
-            "   my %cookie;\n" +
-            "   foreach (@array) {" +
-            "       if ($_->{name} ex $name) {\n" +
-            "           %cookie = $_;\n" +
-            "           last;\n" +
-            "       }\n" +
-            "    }\n" +
-            "    return %cookie;\n" +
-            "}",
+    start : "#!perl\n\nuse strict;\nuse warnings;\nuse Test::More;\nuse Selenium::Remote::Driver;\n\nmy $wd = Selenium::Remote::Driver->new();\n",
     end : "\ndone_testing();\n",
     lineForType : {
         "get" : "ok( $wd->get({url}) );\n",
@@ -24,44 +13,45 @@ builder.selenium2.io.addLangFormatter({
         "mouseOverElement":
             "ok( $wd->find_element({locator}, {locatorBy})->hover() );\n",
         "setElementText":
-            "my $el = $wd->find_element({locator}, {locatorBy});\n" +
-            "ok( $el->click() );\n" +
-            "ok( $el->clear() );\n" +
-            "ok( $el->send_keys({text}) );\n",
+            "{\n    my $el = $wd->find_element({locator}, {locatorBy});\n" +
+            "    ok( $el->click() );\n" +
+            "    ok( $el->clear() );\n" +
+            "    ok( $el->send_keys({text}) );\n}\n",
         "sendKeysToElement":
-            "my $el = $wd->find_element({locator}, {locatorBy});\n" +
-            "ok( $el->click() );\n" +
-            "ok( $el->send_keys({text}) );\n",
+            "{\n    my $el = $wd->find_element({locator}, {locatorBy});\n" +
+            "    ok( $el->click() );\n" +
+            "    ok( $el->send_keys({text}) );\n}\n",
         "setElementSelected":
-            "my $el = $wd->find_element({locator}, {locatorBy});\n" +
-            "if(! $el->is_selected()) {\nok( $el->click() );\n}",
+            "{\n    my $el = $wd->find_element({locator}, {locatorBy});\n" +
+            "    if (! $el->is_selected()) {\n        ok( $el->click() );\n    }\n}\n",
         "setElementNotSelected":
-            "my $el = $wd->find_element({locator}, {locatorBy});\n" +
-            "if($el->is_selected()) {\nok( $el->click() );\n}",
+            "{\n    my $el = $wd->find_element({locator}, {locatorBy});\n" +
+            "    if ($el->is_selected()) {\n        ok( $el->click() );\n    }\n}\n",
         "submitElement":
             "ok( $wd->find_element({locator}, {locatorBy})->submit() );\n",
         "addCookie":
-            function(step, escapeValue, userParams, doSubs) {
+            function (step, escapeValue, userParams, doSubs) {
                 var name = escapeValue(step.type, step.name),
                     value = escapeValue(step.type, step.value),
                     path = "/",
                     domain = "",
                     secure = 0;
-
+                var i, kv;
                 var opts = step.options.split(",");
-                for (var i = 0; i < opts.length; i++) {
-                  var kv = opts[i].trim().split("=");
-                  if (kv.length == 1) { continue; }
-                  if (kv[0] == "path") {
-                    path = escapeValue(step.type, kv[1])
-                  }
-                return "ok ($wd->add_cookie('" + name + "', '" + value + "', '" + path + "', '" + domain + "', 0) );\n";
+                for (i = 0; i < opts.length; i++) {
+                    kv = opts[i].trim().split("=");
+                    if (kv.length === 1) { continue; }
+                    if (kv[0] === "path") {
+                        path = escapeValue(step.type, kv[1]);
+                    }
+                }
+                return "ok( $wd->add_cookie('" + name + "', '" + value + "', '" + path + "', '" + domain + "', 0) );\n";
             },
         "deleteCookie": "ok( $wd->delete_cookie_named({name}) );\n",
-        "switchToFrame": "(ok $wd->switch_to_frame({identifier}) );\n",
-        "switchToFrameByIndex": "(ok $wd->switch_to_frame({index}) );\n",
-        "switchToWindow": "(ok $wd->switch_to_window({name}) );\n",
-        "switchToDefaultContent": "(ok $wd->switch_to_frame(NULL) );\n",
+        "switchToFrame": "ok( $wd->switch_to_frame({identifier}) );\n",
+        "switchToFrameByIndex": "ok( $wd->switch_to_frame({index}) );\n",
+        "switchToWindow": "ok( $wd->switch_to_window({name}) );\n",
+        "switchToDefaultContent": "ok( $wd->switch_to_frame(NULL) );\n",
         "answerAlert": "ok( $wd->send_keys_to_alert({text}) );\n" +
                         "ok( $wd->accept_alert );\n",
         "acceptAlert": "ok( $wd->accept_alert );\n",
@@ -84,39 +74,35 @@ builder.selenium2.io.addLangFormatter({
         }[locatorType];
     },
     assert : function (step, escapeValue, doSubs, getter) {
+        // Test should stop if step fails
         if (step.negated) {
             return doSubs(
                 "if ({getter} eq {cmp}) {\n" +
-                "    die \"!{stepTypeName} failed\";\n" +
+                "    BAIL_OUT \"!{stepTypeName} failed\";\n" +
                 "}\n", getter);
         } else {
             return doSubs(
                 "if ({getter} ne {cmp}) {\n" +
-                "    die \"!{stepTypeName} failed\";\n" +
+                "    BAIL_OUT \"!{stepTypeName} failed\";\n" +
                 "}\n", getter);
         }
     },
     verify : function (step, escapeValue, doSubs, getter) {
+        // Test should continue if step fails
         if (step.negated) {
-            return doSubs(
-                "if ({getter} eq {cmp}) {\n" +
-                "    print \"!{stepTypeName} failed\";\n" +
-                "}\n", getter);
+            return doSubs("isnt( {getter}, {cmp} )\n", getter);
         } else {
-            return doSubs(
-                "if ({getter} ne {cmp}) {\n" +
-                "    print \"{stepTypeName} failed\";\n" +
-                "}\n", getter);
+            return doSubs("is( {getter}, {cmp} )\n", getter);
         }
     },
     waitFor : "",
     store : "${variable} = {getter};\n",
     boolean_assert:
-      "if ({posNot}{getter}) {\n" +
+      "if ( {posNot} {getter} ) {\n" +
       " die (\"{negNot}{stepTypeName} failed\");\n" +
       "}\n",
     boolean_verify:
-      "if ({posNot}{getter}) {\n" +
+      "if ( {posNot} {getter} ) {\n" +
       " print \"{negNot}{stepTypeName} failed\";\n" +
       "}\n",
     boolean_waitFor: "",
@@ -132,7 +118,7 @@ builder.selenium2.io.addLangFormatter({
       //   vartype: ""
       // },
       // "CookiePresent": {
-      //   getter: "($wd->getAllCookie({name}))",
+      //   getter: "($wd->get_all_cookie({name}))",
       //   vartype: ""
       // },
       // "AlertPresent": {
@@ -140,7 +126,7 @@ builder.selenium2.io.addLangFormatter({
       //   vartype: ""
       // },
       "ElementSelected": {
-        getter: "($wd->find_element({locator}, {locatorBy})->is_selected())",
+        getter: "$wd->find_element({locator}, {locatorBy})->is_selected()",
         vartype: ""
       }
     },
@@ -181,7 +167,11 @@ builder.selenium2.io.addLangFormatter({
         vartype: "String"
       },
       "CookieByName": {
-        getter: 'get_cookie($wd->get_all_cookies(), {name})',
+        getter: "(\n" +
+         "    map { $_->{'value'} }\n" +
+         "    grep { $_->{'name'} eq {name} }\n" +
+         "    @{ $wd->get_all_cookies() }\n" +
+         ")[0]",
         cmp: "{value}",
         vartype: ""
       },
