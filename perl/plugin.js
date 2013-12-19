@@ -1,4 +1,5 @@
 /*jslint indent: 4, white: true, browser: true, continue: true, vars: true, plusplus: true, sloppy: true, eqeq: true */
+/*global $, jQuery, builder */
 builder.selenium2.io.addLangFormatter({
     name : "Perl - WebDriver",
     extension : ".t",
@@ -59,7 +60,7 @@ builder.selenium2.io.addLangFormatter({
         "dismissAlert": "ok( $wd->dismiss_alert );\n",
         "saveScreenshot" : "ok( $wd->screenshot() );\n",
         "print": "print {text};\n",
-        "store": "${variable} = {text};\n"
+        "store": "${{variable}:varType} = {text};\n"
     },
     locatorByForType : function (stepType, locatorType, locatorIndex) {
         // Valid identifiers in Perl: class, class_name, css, id, link,
@@ -99,7 +100,7 @@ builder.selenium2.io.addLangFormatter({
         return doSubs("is( {getter}, {cmp} )\n", getter);
     },
     waitFor : "",
-    store : "${variable} = {getter};\n",
+    store : "${{variable}:varType} = {getter};\n",
     boolean_assert:
       "if ( {posNot} {getter} ) {\n" +
       " die (\"{negNot}{stepTypeName} failed\");\n" +
@@ -109,8 +110,7 @@ builder.selenium2.io.addLangFormatter({
       " print \"{negNot}{stepTypeName} failed\";\n" +
       "}\n",
     boolean_waitFor: "",
-    boolean_store:
-      "${variable} = {getter};\n",
+    boolean_store : "${{variable}:varType} = {getter};\n",
     boolean_getters: {
       // "TextPresent": {
       //   getter: "(strpos($wd->find_element(\"//html\", \"xpath\")->get_text(), {text}) ne false)",
