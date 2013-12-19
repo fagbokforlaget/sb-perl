@@ -135,37 +135,37 @@ builder.selenium2.io.addLangFormatter({
     },
     getters: {
       "BodyText": {
-        getter: '$wd->find_element("//html", "xpath")->get_text();',
+        getter: '$wd->find_element("//html", "xpath")->get_text()',
         cmp: "{text}",
         vartype: ""
       },
       "PageSource": {
-        getter: "$wd->get_page_source();",
+        getter: "$wd->get_page_source()",
         cmp: "{source}",
         vartype: ""
       },
       "Text": {
-        getter: "$wd->find_element({locator}, {locatorBy})->get_text();",
+        getter: "$wd->find_element({locator}, {locatorBy})->get_text()",
         cmp: "{text}",
         vartype: ""
       },
       "CurrentUrl": {
-        getter: "$wd->get_current_url();",
+        getter: "$wd->get_current_url()",
         cmp: "{url}",
         vartype: ""
       },
       "Title": {
-        getter: "$wd->get_title();",
+        getter: "$wd->get_title()",
         cmp: "{title}",
         vartype: ""
       },
       "ElementValue": {
-        getter: "$wd->find_element({locator}, {locatorBy})->get_value();",
+        getter: "$wd->find_element({locator}, {locatorBy})->get_value()",
         cmp: "{value}",
         vartype: ""
       },
       "ElementAttribute": {
-        getter: "$wd->find_element({locator}, {locatorBy})->get_attribute({attributeName});",
+        getter: "$wd->find_element({locator}, {locatorBy})->get_attribute({attributeName})",
         cmp: "{value}",
         vartype: "String"
       },
