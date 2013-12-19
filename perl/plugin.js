@@ -56,7 +56,7 @@ builder.selenium2.io.addLangFormatter({
                         "ok( $wd->accept_alert );\n",
         "acceptAlert": "ok( $wd->accept_alert );\n",
         "dismissAlert": "ok( $wd->dismiss_alert );\n",
-        "saveScreenshot" = "ok( $wd->screenshot() );\n",
+        "saveScreenshot" : "ok( $wd->screenshot() );\n",
         "print": "print {text};\n",
         "store": "${variable} = {text};\n"
     },
