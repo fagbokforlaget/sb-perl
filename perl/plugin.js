@@ -1,3 +1,4 @@
+/*jslint indent: 4, white: true, browser: true, continue: true, vars: true, plusplus: true, sloppy: true, eqeq: true */
 builder.selenium2.io.addLangFormatter({
     name : "Perl - WebDriver",
     extension : ".t",
@@ -79,21 +80,23 @@ builder.selenium2.io.addLangFormatter({
             return doSubs(
                 "if ({getter} eq {cmp}) {\n" +
                 "    BAIL_OUT \"!{stepTypeName} failed\";\n" +
-                "}\n", getter);
-        } else {
-            return doSubs(
-                "if ({getter} ne {cmp}) {\n" +
-                "    BAIL_OUT \"!{stepTypeName} failed\";\n" +
-                "}\n", getter);
+                "}\n",
+                getter
+            );
         }
+        return doSubs(
+            "if ({getter} ne {cmp}) {\n" +
+            "    BAIL_OUT \"!{stepTypeName} failed\";\n" +
+            "}\n",
+            getter
+        );
     },
     verify : function (step, escapeValue, doSubs, getter) {
         // Test should continue if step fails
         if (step.negated) {
             return doSubs("isnt( {getter}, {cmp} )\n", getter);
-        } else {
-            return doSubs("is( {getter}, {cmp} )\n", getter);
         }
+        return doSubs("is( {getter}, {cmp} )\n", getter);
     },
     waitFor : "",
     store : "${variable} = {getter};\n",
@@ -215,8 +218,9 @@ builder.selenium2.io.addLangFormatter({
         var hasDollar = false; // Whether we've just encountered a $ character.
         var insideVar = false; // Whether we are reading in the name of a variable.
         var varName = ""; // Accumulates letters of the current variable.
-        for (var i = 0; i < value.length; i++) {
-            var ch = value.substring(i, i + 1);
+        var i, ch;
+        for (i = 0; i < value.length; i++) {
+            ch = value.substring(i, i + 1);
             if (insideVar) {
                 if (ch == "}") {
                     // We've finished reading in the name of a variable.
